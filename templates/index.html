@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Review Sentiment Analyzer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="movie-icon">🎬</div>
+      <div>
+        
+        <h1>Movie Review Sentiment Analyzer</h1>
+        <p class="subtitle">Discover whether a movie review sounds positive or negative.</p>
+      </div>
+    </header>
+
+    <section class="layout">
+      <div class="panel input-panel">
+        <h2>✍️ Enter your review</h2>
+        <p class="muted">Write a few sentences about a movie, then analyze its sentiment.</p>
+        <form method="POST">
+          <textarea name="review" rows="7" placeholder="Example: The acting was brilliant and the story kept me interested..." required>{{ review }}</textarea>
+          <button type="submit">🔍 Analyze Sentiment</button>
+        </form>
+        <div class="examples">
+          <p class="muted small">Need an example?</p>
+          <button class="sample positive-sample" type="button"
+            onclick="document.querySelector('textarea').value='This movie was wonderful. The acting was excellent and I loved the story.'">Try a positive review</button>
+          <button class="sample negative-sample" type="button"
+            onclick="document.querySelector('textarea').value='The movie was boring and disappointing. The story was weak and the acting was poor.'">Try a negative review</button>
+        </div>
+      </div>
+
+      <div class="panel result-panel">
+        {% if result %}
+          <div class="result {{ 'positive' if result.sentiment == 'Positive' else 'negative' }}">
+            <div class="result-icon">{{ '😊' if result.sentiment == 'Positive' else '😞' }}</div>
+            <div>
+              <p class="eyebrow">PREDICTED SENTIMENT</p>
+              <h2>{{ result.sentiment }}</h2>
+              <p class="muted">Model confidence: <strong>{{ result.confidence }}%</strong></p>
+            </div>
+          </div>
+          <div class="probability">
+            <div class="prob-label"><span>Positive score</span><strong>{{ result.positive_probability }}%</strong></div>
+            <div class="bar"><span class="bar-positive" style="width: {{ result.positive_probability }}%"></span></div>
+          </div>
+          <div class="probability">
+            <div class="prob-label"><span>Negative score</span><strong>{{ result.negative_probability }}%</strong></div>
+            <div class="bar"><span class="bar-negative" style="width: {{ result.negative_probability }}%"></span></div>
+          </div>
+          <div class="note">This is a machine-learning prediction, not a guarantee. Sarcasm and mixed opinions can be difficult to classify.</div>
+        {% elif error %}
+          <div class="error">⚠️ {{ error }}</div>
+          <div class="empty-state">Enter a review and run the analysis to see the result here.</div>
+        {% else %}
+          <div class="empty-state">
+            <div class="empty-icon">💬</div>
+            <h2>Your result will appear here</h2>
+            <p class="muted">Submit a review to see its predicted sentiment and scores.</p>
+          </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <section class="how-it-works">
+      <h2>How it works</h2>
+      <div class="steps">
+        <div class="step"><span>1</span><strong>Review text</strong><p>Input your movie opinion.</p></div>
+        <div class="step"><span>2</span><strong>TF-IDF</strong><p>Convert words into numeric features.</p></div>
+        <div class="step"><span>3</span><strong>Logistic Regression</strong><p>Predict positive or negative sentiment.</p></div>
+      </div>
+    </section>
+
+    <footer>Built with Python · Flask · NLP · Scikit-learn</footer>
+  </main>
+</body>
+</html>
